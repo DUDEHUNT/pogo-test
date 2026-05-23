@@ -209,8 +209,8 @@ img{-webkit-user-select:none;-webkit-touch-callout:none;user-select:none}
 #langScreen{position:fixed;inset:0;background:#f5f3ef;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px}
 #langScreen.hide{display:none}
 .lang-logo{height:64px;object-fit:contain;margin-bottom:24px}
-.lang-heading{font-size:34px;font-weight:900;color:#1c1917;text-align:center;margin-bottom:6px;line-height:1.15;letter-spacing:-.03em}
-.lang-heading span{display:block;font-size:18px;font-weight:600;color:#78716c;margin-top:4px;letter-spacing:0}
+.lang-heading{font-size:42px;font-weight:900;color:#1c1917;text-align:center;margin-bottom:8px;line-height:1.1;letter-spacing:-.03em}
+.lang-heading span{display:block;font-size:22px;font-weight:700;color:#78716c;margin-top:6px;letter-spacing:-.01em}
 .lang-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px;margin-top:28px;margin-bottom:20px}
 .lang-btn{width:100%;padding:18px 22px;border:none;border-radius:16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:transform .12s;-webkit-tap-highlight-color:transparent;text-align:left}
 .lang-btn:active{transform:scale(.97)}
@@ -999,6 +999,21 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classL
 function hq(u){if(!u)return'';if(u.includes('cloudinary.com'))return u.replace('/upload/','/upload/w_1000,q_auto,f_auto/');const m=u.match(/\/d\/([a-zA-Z0-9_-]+)/);if(m)return'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w1000';return u;}
 function thumb(u){if(!u)return'';if(u.includes('cloudinary.com'))return u.replace('/upload/','/upload/w_400,q_auto,f_auto,dpr_auto/');const m=u.match(/\/d\/([a-zA-Z0-9_-]+)/);if(m)return'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w400';return u;}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+// Language button listeners — most reliable approach
+document.addEventListener('DOMContentLoaded', function(){
+  const btnHi = document.getElementById('btnHi');
+  const btnEn = document.getElementById('btnEn');
+  if(btnHi) btnHi.addEventListener('click', function(){ setLang('hi'); });
+  if(btnEn) btnEn.addEventListener('click', function(){ setLang('en'); });
+});
+// Also attach immediately in case DOMContentLoaded already fired
+(function(){
+  const btnHi = document.getElementById('btnHi');
+  const btnEn = document.getElementById('btnEn');
+  if(btnHi) btnHi.addEventListener('click', function(){ setLang('hi'); });
+  if(btnEn) btnEn.addEventListener('click', function(){ setLang('en'); });
+})();
 
 history.pushState({s:'home'},'');
 window.addEventListener('popstate',function(){
