@@ -486,17 +486,32 @@ function t(key){ return (T[LANG]||T.hi)[key]||key; }
 function setLang(lang){
   LANG = lang;
   try{ sessionStorage.setItem('pogo_lang', lang); }catch(e){}
+
+  // 1. Hide lang screen immediately
   const ls = document.getElementById('langScreen');
-  if(ls){ ls.style.display='none'; ls.classList.add('hide'); }
-  try{ applyLang(); }catch(e){ console.error('applyLang:',e); }
-  if(sentTs && Date.now() > sentTs + expiryMs){
-    showScreen('expiredScreen');
-  } else {
-    showScreen('homeScreen');
-    if(sentTs) startTimer();
-  }
+  if(ls){ ls.style.display='none'; }
+
+  // 2. Apply language text
+  try{ applyLang(); }catch(e){ console.error('applyLang error:',e); }
+
+  // 3. Show home screen
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('show'));
+  const home = document.getElementById('homeScreen');
+  if(home){ home.classList.add('show'); home.style.display='flex'; }
+  window.scrollTo(0,0);
+
+  // 4. Render content
   renderCatGrid();
   updateFab();
+
+  // 5. Start timer if valid
+  if(sentTs && Date.now() > sentTs + expiryMs){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('show'));
+    const exp = document.getElementById('expiredScreen');
+    if(exp){ exp.classList.add('show'); exp.style.display='flex'; }
+  } else if(sentTs){
+    startTimer();
+  }
 }
 
 function applyLang(){
@@ -999,21 +1014,6 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classL
 function hq(u){if(!u)return'';if(u.includes('cloudinary.com'))return u.replace('/upload/','/upload/w_1000,q_auto,f_auto/');const m=u.match(/\/d\/([a-zA-Z0-9_-]+)/);if(m)return'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w1000';return u;}
 function thumb(u){if(!u)return'';if(u.includes('cloudinary.com'))return u.replace('/upload/','/upload/w_400,q_auto,f_auto,dpr_auto/');const m=u.match(/\/d\/([a-zA-Z0-9_-]+)/);if(m)return'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w400';return u;}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
-
-// Language button listeners — most reliable approach
-document.addEventListener('DOMContentLoaded', function(){
-  const btnHi = document.getElementById('btnHi');
-  const btnEn = document.getElementById('btnEn');
-  if(btnHi) btnHi.addEventListener('click', function(){ setLang('hi'); });
-  if(btnEn) btnEn.addEventListener('click', function(){ setLang('en'); });
-});
-// Also attach immediately in case DOMContentLoaded already fired
-(function(){
-  const btnHi = document.getElementById('btnHi');
-  const btnEn = document.getElementById('btnEn');
-  if(btnHi) btnHi.addEventListener('click', function(){ setLang('hi'); });
-  if(btnEn) btnEn.addEventListener('click', function(){ setLang('en'); });
-})();
 
 history.pushState({s:'home'},'');
 window.addEventListener('popstate',function(){
